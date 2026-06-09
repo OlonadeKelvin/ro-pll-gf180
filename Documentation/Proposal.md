@@ -8,12 +8,39 @@ Team members
 | Alder | @Alder04 | Purdue Univeristy (undergrad) | TBD |
 
 
-Overview: This is a sample project issue to demonstrate was is expected in the first comment of each team's issue. The title should include the team name and the project name. Overview should only be a couple lines long. Try to limit information in the first issue so it is short enough to be viewed without scrolling.
+### Overview
+This project presents a Ring Oscillator-based Phase-Locked Loop (RO-PLL) designed for robust clock generation and frequency synthesis. The architecture leverages a ring oscillator to achieve a wide tuning range and a highly compact area footprint compared to traditional LC-tank PLLs. This design targets power-efficient, mixed-signal applications requiring stable clocking across various operational modes.
 
 > Longer explanations, concerns, etc. should be on the `README.md` of your repo.
 
-Size: 500um x 100um (estimate) or block type (see padring proposal below)
-Required pins: 6
+### Motivation
+We aim to design a versatile, low-area RO-PLL suitable for integration into larger System-on-Chip (SoC) environments. This project will serve as a foundational mixed-signal building block, focusing on optimizing the trade-offs between phase noise, power consumption, and locking time.
+
+### Proposed Architecture
+The core architectural blocks include:
+- Phase Frequency Detector (PFD)
+- Charge Pump (CP)
+- Low-Pass Loop Filter (LPF)
+- Voltage-Controlled Ring Oscillator (VCO)
+- Frequency Divider (Feedback loop)
+
+### Initial Specifications
+- **Technology:** GF180MCU
+- **Target Frequency Range:** [TBD - e.g., 100MHz - 500MHz]
+- **Supply Voltage:** [TBD - e.g., 1.8V / 3.3V]
+- **Reference Clock:** [TBD - e.g., 10MHz]
+- **Power Consumption:** [TBD target]
+- **Verification Goal:** Schematic-level block simulations, followed by closed-loop top-level simulation and layout/PEX.
+
+
+### Key Design Challenges
+- Minimizing phase noise and jitter inherent to ring oscillators.
+- Achieving a stable and fast lock time across process, voltage, and temperature (PVT) variations.
+- Layout symmetry and managing substrate noise injection in a mixed-signal environment.
+
+### Physical Estimates
+- **Size:** 500um x 100um (estimate) or block type (see padring proposal below)
+- **Required pins:** 6
 
 > See the [padring proposal](https://docs.google.com/presentation/d/1Xv_e0r1JKkjAIttDKGDsLEcDNz211jee_gQeWR6n7Es/edit?usp=sharing) for block sizes and pin counts.
 
