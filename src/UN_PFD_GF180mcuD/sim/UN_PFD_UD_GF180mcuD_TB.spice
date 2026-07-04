@@ -1,0 +1,125 @@
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_PFD_UD_GF180mcuD_TB.sch
+**.subckt UN_PFD_UD_GF180mcuD_TB
+Vref REF 0 3.3
+Vdiv DIV 0 3.3
+VDD net1 0 3.3
+C1 DN 0 50f
+C2 UP 0 50f
+x1 net1 UP REF 0 DIV DN UN_PFD_UD_GF180mcuD
+**** begin user architecture code
+
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+
+
+
+
+.control
+save all
+set filetype=ascii
+
+** Define Input Signal Properties.
+** let allows calculations. set does not.
+
+let fsig = 0.1e3
+let tper = 1/fsig
+let tfr = 0.01*tper
+let ton = 0.5*tper-2*tfr
+let tdel= 0.2*tper
+
+** Define the parameters for Transient Analysis
+** For transient Analysis, you have 2 parameters typically, How long to run sim and step size.
+
+let tstop = 5*tper
+let tstep = 0.001*tper
+
+** Set the input sources with these parameters.
+** VDD is already stable, but you can choose to simulate it separately.
+** You use alter command to edit the default properties of the sources
+
+alter @Vref[DC] = 0.0
+alter @Vdiv[DC] = 0.0
+alter @Vref[PULSE] = [ 0 3.3 0 $&tfr $&tfr $&ton $&tper ]
+alter @Vdiv[PULSE] = [ 0 3.3 $&tdel $&tfr $&tfr $&ton $&tper ]
+
+**** list of simulations to perform
+**** The $& evaluates expressions and converts results to string because parameters are expected to be string
+
+op
+tran $&tstep $&tstop
+
+** plots
+setplot tran1
+let vup = v(up)
+let vdn = v(dn)
+let vref= v(ref)
+let vdiv= v(div)
+
+let ivdd = vdd#branch *1e3 * -1
+
+plot vup vdn vref vdiv
+
+setplot op1
+
+write /foss/designs/un_basicpll_gf180mcud/un_pfd_gf180mcud/sim/pfd_ud_tb.raw tran1.all
+
+.endc
+
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_PFD_UD_GF180mcuD.sym # of pins=6
+** sym_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_PFD_UD_GF180mcuD.sym
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_PFD_UD_GF180mcuD.sch
+.subckt UN_PFD_UD_GF180mcuD VDD UP REF VSS DIV DN
+*.iopin VDD
+*.iopin VSS
+*.ipin REF
+*.ipin DIV
+*.opin UP
+*.opin DN
+x3 VDD net1 UP DN VSS UN_NAND2_GF180mcuD
+x1 VDD VDD net2 REF VSS UP net1 UN_SRFF_GF180mcuD
+x2 VDD VDD net3 DIV VSS DN net1 UN_SRFF_GF180mcuD
+.ends
+
+
+* expanding   symbol:  /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_NAND2_GF180mcuD.sym # of pins=5
+** sym_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_NAND2_GF180mcuD.sym
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_NAND2_GF180mcuD.sch
+.subckt UN_NAND2_GF180mcuD VDD Y A B VSS
+*.iopin VDD
+*.iopin VSS
+*.ipin A
+*.ipin B
+*.opin Y
+XM1 Y A net1 VSS nfet_03v3 L=0.28u W=0.22u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM2 net1 B VSS VSS nfet_03v3 L=0.28u W=0.22u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM3 Y A VDD VDD pfet_03v3 L=0.28u W=0.22u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM4 Y B VDD VDD pfet_03v3 L=0.28u W=0.22u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+.ends
+
+
+* expanding   symbol:  /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_SRFF_GF180mcuD.sym # of pins=7
+** sym_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_SRFF_GF180mcuD.sym
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/UN_SRFF_GF180mcuD.sch
+.subckt UN_SRFF_GF180mcuD VDD S Q CLK VSS Qn R
+*.iopin VDD
+*.iopin VSS
+*.ipin S
+*.ipin R
+*.ipin CLK
+*.opin Q
+*.opin Qn
+x1 VDD Q net2 Qn VSS UN_NAND2_GF180mcuD
+x2 VDD Qn net1 Q VSS UN_NAND2_GF180mcuD
+x3 VDD net2 S CLK VSS UN_NAND2_GF180mcuD
+x4 VDD net1 R CLK VSS UN_NAND2_GF180mcuD
+.ends
+
+.end

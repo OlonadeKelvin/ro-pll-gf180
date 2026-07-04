@@ -1,0 +1,18 @@
+v {xschem version=3.4.8RC file_version=1.3}
+G {}
+K {}
+V {}
+S {fill=false
+}
+F {}
+E {}
+L 4 -30 -120 0 -120 {}
+L 4 110 -120 140 -120 {}
+L 4 -30 -40 0 -40 {}
+L 4 50 -170 50 -160 {}
+L 4 50 0 50 10 {}
+B 5 -42.5 -312.5 -37.5 -307.5 {name=XXX
+dir=inout}
+P 4 5 -0 -160 110 -160 110 -0 0 0 0 -160 {}
+P 4 4 0 -90 10 -80 0 -70 0 -90 {}
+C {/foss/designs/BasicCells/Inverter.sym} -110 -100 0 0 {name=x1}

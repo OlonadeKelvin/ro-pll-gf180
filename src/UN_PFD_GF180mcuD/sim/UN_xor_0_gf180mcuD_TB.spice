@@ -1,0 +1,104 @@
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/work/UN_xor_0_gf180mcuD_TB.sch
+**.subckt UN_xor_0_gf180mcuD_TB
+VA A 0 0
+VB B 0 3.3
+C1 Out 0 50f
+VDD net1 0 3.3
+x1 net1 A Out B 0 UN_xor_0_gf180mcuD
+**** begin user architecture code
+
+
+
+.control
+save all *TODO: find out what this does.
+
+** Define Input Signal Properties.
+** let allows calculations. set does not.
+
+let fsig = 0.5e5
+let tper = 1/fsig
+let tfr = 0.01*tper
+let ton = 0.5*tper-2*tfr
+let tdel= 0.2*tper
+
+** Define the parameters for Transient Analysis
+** For transient Analysis, you have 2 parameters typically, How long to run sim and step size.
+
+let tstop = 5*tper
+let tstep = 0.001*tper
+
+** Set the input sources with these parameters.
+** VDD is already stable, but you can choose to simulate it separately.
+** You use alter command to edit the default properties of the sources
+
+alter @VA[DC] = 0.0
+alter @VB[DC] = 3.3
+alter @VA[PULSE] = [ 0 3.3 0 $&tfr $&tfr $&ton $&tper ]
+alter @VB[PULSE] = [ 0 3.3 $&tdel $&tfr $&tfr $&ton $&tper ]
+
+**** list of simulations to perform
+**** The $& evaluates expressions and converts results to string because parameters are expected to be string
+
+op
+tran $&tstep $&tstop
+
+** plots
+setplot tran1
+let vout = v(out)
+let va= v(a)
+let vb= v(b)
+
+let ivdd = vdd#branch *1e3 * -1
+
+plot vout va vb
+
+setplot op1
+
+write /foss/designs/un_basicpll_gf180mcud/un_pfd_gf180mcud/sim/xor_tb.raw tran1.all
+
+.endc
+
+
+
+.include /foss/pdks/gf180mcuD/libs.tech/ngspice/design.ngspice
+.lib /foss/pdks/gf180mcuD/libs.tech/ngspice/sm141064.ngspice typical
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/work/UN_xor_0_gf180mcuD.sym # of pins=5
+** sym_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/work/UN_xor_0_gf180mcuD.sym
+** sch_path: /foss/designs/UN_BasicPLL_GF180mcuD/UN_PFD_GF180mcuD/work/UN_xor_0_gf180mcuD.sch
+.subckt UN_xor_0_gf180mcuD VDD A Y B VSS
+*.iopin VSS
+*.iopin VDD
+*.opin Y
+*.ipin A
+*.ipin B
+XM1 Y A_n net2 VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM2 Y A net1 VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM3 net2 B_n VSS VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM4 net1 B VSS VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM5 Y A_n net3 VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM6 net3 A VDD VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM7 Y B_n net4 VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM8 net4 B VDD VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM9 A_n A VDD VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM10 A_n A VSS VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM11 B_n B VDD VDD pfet_03v3 L=0.28u W=1u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+XM12 B_n B VSS VSS nfet_03v3 L=0.28u W=0.5u nf=1 ad='int((nf+1)/2) * W/nf * 0.18u' as='int((nf+2)/2) * W/nf * 0.18u' pd='2*int((nf+1)/2) * (W/nf + 0.18u)'
++ ps='2*int((nf+2)/2) * (W/nf + 0.18u)' nrd='0.18u / W' nrs='0.18u / W' sa=0 sb=0 sd=0
+.ends
+
+.end
