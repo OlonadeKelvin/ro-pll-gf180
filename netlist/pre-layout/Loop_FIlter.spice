@@ -1,0 +1,12 @@
+** sch_path: /foss/designs/ro-pll-gf180/xschem/loop_filter/Loop_FIlter.sch
+**.subckt Loop_FIlter CPOUT VCTRL VSSA
+*.ipin CPOUT
+*.opin VCTRL
+*.iopin VSSA
+XC1 CPOUT VSSA cap_mim_2f0fF c_width=12 c_length=12
+XR1 net1 CPOUT VSSA ppolyf_u_1k r_width=1 r_length=42
+XC2 net1 VSSA cap_mim_2f0fF c_width=41 c_length=41 m=4
+XR2 VCTRL CPOUT VSSA ppolyf_u_1k r_width=1 r_length=80
+XC3 VCTRL VSSA cap_mim_2f0fF c_width=7.6 c_length=7.6
+**.ends
+.end
